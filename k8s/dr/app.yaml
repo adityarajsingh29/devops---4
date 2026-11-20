@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app
+spec:
+  replicas: 2            # two replicas: if one pod fails the Service fails over to the other
+  selector:
+    matchLabels: { app: notes-app }
+  template:
+    metadata:
+      labels: { app: notes-app }
+    spec:
+      containers:
+        - name: app
+          image: lab4-app:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - { name: REDIS_HOST, value: redis }
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet: { path: /health, port: 5000 }
+            periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-app
+spec:
+  selector: { app: notes-app }
+  ports:
+    - port: 80
+      targetPort: 5000

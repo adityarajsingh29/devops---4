@@ -1,0 +1,12 @@
+# Live traffic goes to the slot named in the selector. Switching = changing "slot".
+apiVersion: v1
+kind: Service
+metadata:
+  name: bg-app
+spec:
+  selector:
+    app: bg-app
+    slot: blue
+  ports:
+    - port: 80
+      targetPort: 5000

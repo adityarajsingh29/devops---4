@@ -1,0 +1,21 @@
+# Argo CD Application: Git (this repo) is the single source of truth for namespace lab4-gitops.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab4-gitops
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/AMit090912/lab-devops-Assignment-4.git
+    targetRevision: main
+    path: gitops/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lab4-gitops
+  syncPolicy:
+    automated:
+      prune: true      # delete objects that were removed from Git
+      selfHeal: true   # undo manual changes made directly in the cluster
+    syncOptions:
+      - CreateNamespace=true
